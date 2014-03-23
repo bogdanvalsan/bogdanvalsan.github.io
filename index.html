@@ -1,7 +1,202 @@
-<!DOCTYPE html>
-<html>
-<body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+<html ng-app="app">
+<head>
+    <title>Charts</title>
+</head>
+
+<body ng-controller="MainCtrl">
+<h1>reports examples</h1>
+
+
+<div class="row">
+	<div class="large-12 columns">
+		<highchart id="chart1" config="chartConfig" class="span9" ></highchart>
+	</div>
+	
+</div>
+
+<div class="rows">
+	<div style="width: 50%; height: 50%; float: left">
+	    <div id="vBar" ng-flot="bar" graph-data="vBarsData" data-graph-title="Bar Graph" data-graph-class="graphClass" data-graph-options="vBarsOptions"></div>
+	</div>
+	<div style="width: 50%; height: 50%; float: left">
+	    <div id="lineStack" ng-flot="line" graph-data="lineStackData" data-graph-title="Chart Stack Graph" data-graph-class="graphClass" data-graph-options="lineStackOptions"></div>
+	</div>
+	<div style="width: 50%; height: 50%; float: left">
+	    <div id="barStack" ng-flot="bar" graph-data="barStackData" data-graph-title="Bar Stack Graph" data-graph-class="graphClass" data-graph-options="barStackOptions"></div>
+	</div>
+	<div style="width: 50%; height: 50%; float: left">
+	    <div id="pieChart" ng-flot="pie" graph-data="pieChartData" data-graph-title="Pie Chart" data-graph-class="graphClass" data-graph-options="pieChartOptions" style="width:550px;height:400px;margin:0 auto"></div>
+	    <div id="flot-memo" style="text-align:center;height:30px;width:250px;height:20px;text-align:center;margin:0"></div>
+	</div>
+</div>
+
+<!--<h1>ng-flot examples</h1>
+
+<div style="width: 50%; height: 50%; float: left">
+    <div ng-flot="bar" graph-data="barData" data-graph-title="Bar Graph" data-graph-class="graphClass" data-graph-options="graphOpts"></div>
+</div>
+<div style="width: 50%; height: 50%; float: right">
+    <div ng-flot="pie" graph-data="pieData" data-graph-title="Pie Graph" data-graph-class="graphClass"></div>
+</div>
+<br>
+<div style="width: 50%; height: 50%; float: left">
+    <div ng-flot="line" graph-data="lineData" data-graph-title="Line Graph" data-graph-class="graphClass" graph-family="line"></div>
+</div>
+<div style="width: 50%; height: 50%; float: right">
+    <div ng-flot="line" graph-data="lineData2" data-graph-title="Line Graph" data-graph-class="graphClass" graph-family="line"></div>
+</div>-->
+
+
+<script src="lib/angular-1.2.0.js"></script>
+<script src="lib/jquery-1.10.2.min.js"></script>
+<script src="lib/jquery.flot.js"></script>
+<script src="lib/jquery.flot.pie.js"></script>
+<script src="lib/jquery.flot.resize-0.8.js"></script>
+<script src="lib/jquery.flot.tooltip.js"></script>
+
+<script src="lib/flot/jquery.flot.time.js"></script>
+<script src="lib/highcharts/highcharts.js"></script>
+<script src="lib/highcharts/modules/data.js"></script>
+<script src="lib/highcharts/modules/drilldown.js"></script>
+<script src="lib/highcharts-ng/dist/highcharts-ng.js"></script>
+<script src="ng-flot-0.1.2.js"></script>
+<script src="app.js"></script>
+<script src="lib/jquery.flot.orderBars.js"></script>
+
+<script type="text/javascript" src="lib/flot/jquery.flot.axislabels.js"></script>
+<script type="text/javascript" src="lib/flot/jquery.flot.stack.js"></script>
+<script type="text/javascript" src="lib/flot/jshashtable-2.1.js"></script>   
+<script type="text/javascript" src="lib/flot/jquery.numberformatter-1.2.3.min.js"></script>
+<script type="text/javascript" src="lib/flot/jquery.flot.pie.min.js"></script>
+<script type="text/javascript" src="lib/flot/jquery.flot.symbol.js"></script>
+
+<link rel="stylesheet" href="lib/style.css" />
+<link rel="stylesheet" href="lib/foundation/css/foundation.css" />
+<script src="lib/foundation/js/vendor/modernizr.js"></script>
+
+<script src="lib/foundation/js/foundation.min.js"></script>
+<script>
+  $(document).foundation();
+var previousPoint = null, previousLabel = null;
+var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+$.fn.UseTooltip = function () {
+    $(this).bind("plothover", function (event, pos, item) {
+        if (item) {
+            if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+                previousPoint = item.dataIndex;
+                previousLabel = item.series.label;
+                $("#tooltip").remove();
+
+                var x = item.datapoint[0];
+                var y = item.datapoint[1];
+
+                var color = item.series.color;
+                var month = new Date(x).getMonth();
+                
+                showTooltip(item.pageX,
+                        item.pageY,
+                        color,
+                        "<strong>" + item.series.label + "</strong><br>" + monthNames[month]
+                         + " : <strong>" + $.formatNumber(y, { format: "#,###", locale: "us" }) +
+                         "</strong>(Count)");
+            }
+        } else {
+            $("#tooltip").remove();
+            previousPoint = null;
+        }
+    });
+};
+function showTooltip(x, y, color, contents) {
+    $('<div id="tooltip">' + contents + '</div>').css({
+        position: 'absolute',
+        display: 'none',
+        top: y - 40,
+        left: x - 120,
+        border: '2px solid ' + color,
+        padding: '3px',
+        'font-size': '9px',
+        'border-radius': '5px',
+        'background-color': '#fff',
+        'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+        opacity: 0.9
+    }).appendTo("body").fadeIn(200);
+};
+
+$.fn.UseTooltip2 = function () {
+    $(this).bind("plothover", function (event, pos, item) {
+        if (item) {
+            if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+                previousPoint = item.dataIndex;
+                previousLabel = item.series.label;
+                $("#tooltip").remove();
+
+                var x = item.datapoint[0];
+                var y = item.datapoint[1];
+
+                var color = item.series.color;
+                var month = new Date(x).getMonth();
+
+                showTooltip2(item.pageX,
+                        item.pageY,
+                        color,
+                        "<strong>" + item.series.label + "</strong><br>" + monthNames[month]
+                         + " : <strong>" + $.formatNumber(y, { format: "#,###", locale: "us" }) +
+                         "</strong>(Tasks)");
+            }
+        } else {
+            $("#tooltip").remove();
+            previousPoint = null;
+        }
+    });
+};
+
+
+function showTooltip2(x, y, color, contents) {
+    $('<div id="tooltip">' + contents + '</div>').css({
+        position: 'absolute',
+        display: 'none',
+        top: y - 60,
+        left: x - 120,
+        border: '2px solid ' + color,
+        padding: '3px',
+        'font-size': '9px',
+        'border-radius': '5px',
+        'background-color': '#fff',
+        'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+        opacity: 0.9
+    }).appendTo("body").fadeIn(200);
+};
+
+$.fn.showMemo = function () {
+    $(this).bind("plothover", function (event, pos, item) {
+        if (!item) { return; }
+        console.log(item.series.data)
+        var html = [];
+        var percent = parseFloat(item.series.percent).toFixed(2);        
+
+        html.push("<div style=\"border:1px solid grey;background-color:",
+             item.series.color,
+             "\">",
+             "<span style=\"color:white\">",
+             item.series.label,
+             " : ",
+             $.formatNumber(item.series.data[0][1], { format: "#,###", locale: "us" }),
+             " (", percent, "%)",
+             "</span>", 
+             "</div>");
+        $("#flot-memo").html(html.join(''));
+    });
+};
+
+$(document).ready(function () {
+    $("#vBar").UseTooltip2();
+    $("#lineStack").UseTooltip();
+    $("#barStack").UseTooltip2();
+    $("#pieChart").showMemo();
+});
+
+</script>
+
 </body>
 </html>

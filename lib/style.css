@@ -1,0 +1,6 @@
+.graph-standard {
+height: 250px;
+z-index: 90;
+width: 100%;
+overflow: hidden;
+}
